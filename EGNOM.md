@@ -6,7 +6,7 @@ Je n'ai pas de remarques, ni de questions spéciales après avoir lu les informa
 ### 2. Listez, définissez et testez tous les services qu'elle propose à ses collaborateurs    
 
 La société EGNOM propose plusieurs services divers :    
-* **Le portail web [EGNOM](https://egnom.pro/)**, c'est là où sont répartit les autres services d'EGNOM
+* **Le portail web** [EGNOM](https://egnom.pro/), c'est là où sont répartit les autres services d'EGNOM
     * **Nextcloud**, un service permettant d'avoir un partage de document, une boite mail, un calendrier connecté, et autres...
     * **Un serveur discord**, Discord est un service qui permet à ses utilisateurs de créer des serveurs, et communiquer en chat textuel / vocal, privé ou public.
 * **Bornes WiFi**, dans ses locaux, l'entreprise dispose de bornes WiFi afin d'y connecter ses employés.
