@@ -16,7 +16,7 @@ La société EGNOM propose plusieurs services divers :
     1. Ouvrir la configuration [VPN_STUDENT.ovpn](md_files/20191022154031186_1792871899/VPN_STUDENT.ovpn) avec le client
     1. Lancer la connexion et renseigner ses identifiants.  
 
-Tout ces services ont été testés, et excepté les **bornes WiFI**, tout fonctionne parfaitement.
+Tout ces services ont été testés, et excepté les **bornes WiFi**, tout fonctionne parfaitement.
 
 ### 3. Dans le cadre d'une utilisation avec BYOD, préparez la liste des choses à faire sur vos appareils
 
