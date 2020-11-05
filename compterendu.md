@@ -104,10 +104,11 @@ echo "L'âge de " .$name. " " .$surname. " est de " .$age. " et il habite à " .
 
 echo "<h2>Structure if</h2>";
 // Detecter si la personne est majeure avec IF
-if($isMajeur == true) // Si la variable $isMajeur est vraie
+if($isMajeur == true) { // Si la variable $isMajeur est vraie
     echo "Oui il est majeur <br>";
-else // Sinon
+} else { // Sinon
     echo "Non, il n'est pas majeur <br>";
+}
 
 echo "<h2>Structure switch</h2>";
 // Detecter si la personne est majeure avec SWITCH
