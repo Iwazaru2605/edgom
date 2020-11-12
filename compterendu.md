@@ -14,7 +14,9 @@ Ensuite, pour démarrer XAMPP, j'ai effectuer la commande suivante `/opt/lampp/l
 Pour arrêter XAMPP, j'effectue la commande suivante `/opt/lampp/lampp stop`     
 Pour vérifier le status de XAMPP, j'effectue la commande suivante `/opt/lampp/lampp status`         
 
-J'ai également installer XAMPP en local, sur ma machine personnelle Windows.
+J'ai également installer XAMPP en local, sur ma machine personnelle Windows. 
+
+Commande la correction : `apt install php libapache2-mod-php php-mysql`
 
 ## Syntaxe
 
@@ -104,11 +106,10 @@ echo "L'âge de " .$name. " " .$surname. " est de " .$age. " et il habite à " .
 
 echo "<h2>Structure if</h2>";
 // Detecter si la personne est majeure avec IF
-if($isMajeur == true) { // Si la variable $isMajeur est vraie
+if($isMajeur == true) // Si la variable $isMajeur est vraie
     echo "Oui il est majeur <br>";
-} else { // Sinon
+else // Sinon
     echo "Non, il n'est pas majeur <br>";
-}
 
 echo "<h2>Structure switch</h2>";
 // Detecter si la personne est majeure avec SWITCH
@@ -129,8 +130,7 @@ J'ai ensuite créé des boucles, d'abord avec la table while, puis avec la table
 
 ```php
 $nombre_de_lignes = 1; // On définit la valeur
-while ($nombre_de_lignes <= 10) // Tant que le nombre de lignes est inférieur ou égal à 10
-{
+while ($nombre_de_lignes <= 10) { // Tant que le nombre de lignes est inférieur ou égal à 10
     echo 'Je ne dois pas regarder les mouches voler quand j\'apprends le PHP.<br />'; // On affiche un msg
     $nombre_de_lignes++; // On ajoute un aux nombre de lignes (à chaque phrase)
 }
@@ -202,3 +202,45 @@ $moncalcul = ajoute(5, 6); // La valeur $moncalcul prendra la valeur retournée 
 echo "La valeure finale est donc " .$moncalcul. " et je peux l'utiliser dans mon code comme je le souhaite<br>";
 ?>
 ```
+
+## Transmettre, stocker et récupérer des données
+
+En PHP, on peux transmettre des données dans l'URL.     
+On peux également les transmettre via un formulaire (c'est la méthode que nous utiliserons).       
+
+Pour envoyer les données, je peux utiliser deux méthodes `post` et `get`. Avec `get` les données seront transmises dans l'URL, mais ce n'est pas sécurisé, et l'utilisateur peut modifier les données. C'est pour cela que nous utiliseras la méthode `post` même si elle n'est pas plus sécurisée, il est préférable.
+
+On peux récupérer des données avec `$_GET` ou `$_POST`.
+
+Voici le code utilisé pour ma page de login
+
+**Page de login :**
+```html
+<form action="cible.php" method="post">
+    Bienvenue, veuillez-vous identifier <br><br>
+    <input type="text" name="login" placeholder="Votre login"/>
+    <input type="password" name="password" placeholder="Votre mot de passe"/>
+    <input class="btn2 success" type="submit" value="Se connecter" />
+</form>
+```
+**Page cible**
+
+```php
+<strong>
+    Merci de vous être identifié<br><br>
+</strong>
+<?php
+$login = $_POST['login'];
+$mdp = $_POST['password'];
+if($login == "secretaire" AND $mdp == "sio@secretaire2020") {
+    include("includes/secretaire.php");
+} elseif($login == "evaluateur" AND $mdp == "sio@eval2020") {
+    include("includes/evaluateur.php");
+} elseif($login == "admin" AND $mdp == "sio@admin2020") {
+    include("includes/admin.php");
+} else {
+    echo "Erreur <br> Identifiant ou mot de passe invalide <br><br> <input class='btn2 danger' type='button' value='Retour' onclick='document.location.href=`index.php`'";
+}
+?>
+```
+
