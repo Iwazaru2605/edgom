@@ -1,246 +1,380 @@
-# Développeur web back-end
+# Administration SQL
+###### Compte-rendu ETTOUIL Adel - BTS SIO 1 - Groupe A
 
 ## Mise en place de l'environnement
+### Installation de MySQL
+**Sur le serveur :**        
+Afin d'installer MySQL sur mon serveur, j'ai effectué cette commande :      
+`apt install mysql-server mysql-client`     
+**En local :**      
+Afin de l'installer sur mon ordinateur personnel, je me suis rendu sur [le site officiel de MySQL](https://dev.mysql.com/downloads/windows/installer/8.0.html) afin de télécharger la dernière version.     
+Lors de l'installation, j'ai selectionné "Full" afin d'avoir les produits MySQL client & serveur.        
+Après avoir installé les "requirements", 
+J'ai configuré le serveur MySQL (j'ai tout laissé par défaut, et j'ai mis un mot de passe).
 
-Afin de travailler dans de bonnes conditions j'ai installé sur ma machine Visual Studio Code, avec les extensions "PHP IntelliSense", et "PHP Debug".       
-Sur le serveur, j'ai installé Apache (dans le TP Administrateur Système).       
-J'ai ensuite installé XAMPP, pour se faire, j'ai télécharger l'installateur sur le site officiel de [XAMPP](https://www.apachefriends.org/fr/index.html).                
-J'ai ensuite mis, à l'aide d'un SFTP, l'installateur dans /root/, et je l'ai lancé à l'aide des commandes suivantes :   
-`chmod +x xampp-linux-*-installer.run` - On donne la permissions au fichier de s'executer.      
-`./xampp-linux-*-installer.run` - On execute le fichier.        
+### Connection & deconnection.
+Je souhaite travailler sur le serveur, donc, afin de me connecter j'effectue la commande `mysql`, et pour me deconnecter, j'effectue la commande `exit`
 
-Ensuite, pour démarrer XAMPP, j'ai effectuer la commande suivante `/opt/lampp/lampp start`      
-### Notes :
-Pour arrêter XAMPP, j'effectue la commande suivante `/opt/lampp/lampp stop`     
-Pour vérifier le status de XAMPP, j'effectue la commande suivante `/opt/lampp/lampp status`         
+### Gestion du SGBDR avec une interface graphique
+Afin de gérer ma base de données avec une interface graphique, je décide d'utiliser phpmyadmin.     
+Pour se faire, j'effectue la commande `apt install phpmyadmin`. Lors de l'installation, j'ai selectionné le serveur web "Apache2", et j'ai selectionné "Yes" lorsqu'il m'a demandé si je souhaité configurer le base de données pour phpmyadmin avec "dbconfig-common".     
+J'ai ensuite mis un mot de passe pour phpmyadmin.
 
-J'ai également installer XAMPP en local, sur ma machine personnelle Windows. 
-
-Commande la correction : `apt install php libapache2-mod-php php-mysql`
-
-## Syntaxe
-
-Afin d'afficher `Hello world` sur ma première page PHP, je vais dans `/xampp/htdocs`.     
-J'ai ensuite créé un dossier `test`, où j'ai créé un dossier `index.php`.      
-Pour afficher le `Hello world`, j'ai écris dans le dossier
-```php
-<?php
-echo "Hello world";
-```     
-Dans la barre de recherche, je tape `localhost/tests/index.php`, et je vois donc afficher "Hello world".
-
-## Debogage
-
-Afin de voir les erreurs dans PHP, je dois modifier le configuration, afin de la trouver, j'ajoute `phpInfo()` à mon code, ce qui donne
-
-```php
-<?php
-echo "Hello world";
-phpInfo();
-?>
-```    
-Je vois donc afficher une tonne d'information, mais une seule m'interesse, **Loaded Configuration File**, je l'ai trouvé, et je m'aperçois que le fichier de configuration est `	C:\xampp\php\php.ini`.
-
-J'ouvre donc le fichier, et le modifie.     
-Afin de trouver la partie qui m'intéresse, je cherche `error_reporting`, je trouve donc, à la ligne 465 :
-```ini
-error_reporting=E_ALL & ~E_DEPRECATED & ~E_STRICT
-```
-Je modifie la valeur en :
-```ini
-error_reporting=E_ALL
+**Connexion**       
+Afin de pouvoir me connecter à phpmyadmin, j'effectue les commandes suivantes sur mysql :       
+```sql
+CREATE USER '20ettouil'@'localhost' IDENTIFIED BY 'student';
+GRANT ALL ON *.* TO '20ettouil'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+QUIT;
 ```
 
-Et je m'assure que, un peu plus bas, le `display_errors` est bien sur On.
-Après avoir modifié et sauvegarder le fichier, je redémarre XAMPP, afin qu'il prenne en compte les modifications. 
-
-Afin de tester, je fais exprès de faire une erreur de syntaxe, j'écris :
-```php
-<?php
-echo "Hello world";
-phpInfo(;
-?>
-```  
-Lorsque je veux afficher `index.php`, je vois
-```
-Parse error: syntax error, unexpected ';' in C:\xampp\htdocs\tests\index.php on line 4
+## Base de données
+Afin de créer une base de données "test", j'effectue la commande suivante : 
+```sql
+CREATE DATABASE test;
 ```
 
-Cela m'indique qu'il y a une erreur de syntaxe, que `;` n'étais pas attendu dans `C:\xampp\htdocs\tests\index.php` à la ligne **4**
-
-## Bases de la programmation
-
-### Les variables
-
-Afin de déclarer une variable, j'utilise `$`        
-Voici quelques variables que j'ai déclaré
-
-```php
-<?php
-echo "Hello world";
-
-$variable1 = "Bonjour, ceci est ma première variable"; // Je définit ma première variable, qui est une chaine de caractères
-$age = 18;              // Ma deuxième variable, qui est un nombres
-$surname = "Ettouil";   // Encore une chaîne de caractère
-$name = "Adel";
-$city = "Charleville-Mézières";
-$isMajeur = true;       // Ceci est une valeure booléenne
-?>
+### PROJET
+Afin de sauvegarder les données du formulaire de selection, je vais utiliser MySQL, je crée donc une nouvelle table que je vais nommer "selection"
+```sql
+CREATE DATABASE selection DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
-### Conditions
-J'ai ensuite fais de la concaténation, et j'ai utilisé des conditions (if, elseif, else, switch)
-
-Mon code ressemble désormais à ça :
-```php
-<?php
-echo "Hello world <br>";
-
-$variable1 = "Bonjour, ceci est ma première variable"; // Je définit ma première variable, qui est une chaine de caractères
-$age = 18;              // Ma deuxième variable, qui est un nombres
-$surname = "Ettouil";   // Encore une chaîne de caractère
-$name = "Adel";
-$city = "Charleville-Mézières";
-$isMajeur = false;       // Ceci est une valeure booléenne
-
-echo "L'âge de " .$name. " " .$surname. " est de " .$age. " et il habite à " .$city. ".<br>";
-
-echo "<h2>Structure if</h2>";
-// Detecter si la personne est majeure avec IF
-if($isMajeur == true) // Si la variable $isMajeur est vraie
-    echo "Oui il est majeur <br>";
-else // Sinon
-    echo "Non, il n'est pas majeur <br>";
-
-echo "<h2>Structure switch</h2>";
-// Detecter si la personne est majeure avec SWITCH
-switch($isMajeur) {
-    case true:
-        echo "Oui, il est majeur <br>";
-        break;
-    case false:
-        echo "Non, il n'est pas majeur <br>";
-        break;
-}
-?>
-``` 
-
-### Boucles
-
-J'ai ensuite créé des boucles, d'abord avec la table while, puis avec la table for, voici le code PHP que j'ai ajouté.
-
-```php
-$nombre_de_lignes = 1; // On définit la valeur
-while ($nombre_de_lignes <= 10) { // Tant que le nombre de lignes est inférieur ou égal à 10
-    echo 'Je ne dois pas regarder les mouches voler quand j\'apprends le PHP.<br />'; // On affiche un msg
-    $nombre_de_lignes++; // On ajoute un aux nombre de lignes (à chaque phrase)
-}
-for ($i = 1; $i <= 10; $i++) { // On définit $i, puis tant que $i est inférieur ou égal à 10, à chaque fois on ajoute un à $i
-    echo $i. " "; // On affiche $i
-}
+Si jamais je dois supprimer cette table, j'effectuerais la commande suivante :
+```sql
+DROP DATABASE selection;
 ```
 
-### Tableaux
+## Tables
+Voici le différents type de données que l'on peut trouver dans des tables
 
-J'ai donc créé un tableau, et je l'ai affiché (clé & valeur), voici le code PHP que j'ai ajouté
+| Colonnes numériques    | Colonnes de textes | Colonnes temporelles |
+| ---------------------- | ------------------ | -------------------- |
+| TINYINT                | CHAR               | DATE                 |
+| SMALLINT               | VARCHAR            | DATETIME             |
+| MEDIUMINT              | TINYTEXT, TINYBLOB | TIMESTAMP            |
+| INT, INTEGER           | TEXT, BLOB         | TIME                 |
+| BIGINT                 | LONGTEXT, LONGBLOB | YEAR                 |
+| FLOAT                  | ENUM               |                      |
+| DOUBLE PRECISION, REAL | SET                |                      |
+| DECIMAL                |                    |                      |
 
-```php
-$ages = array(
-    "Adel" => 18,       // "Adel" est une clé, et 18 est sa valeur
-    "Matheo" => 19,
-    "Père" => 44,
-    "Mère" => 41,
-); // On définit un tableau avec des âges
-
-foreach($ages as $key => $value) { // pour chaque clé & valeur
-    echo $key. " a " .$value. " ans<br>"; // on affiche clé a valeur ans
-}
+### Préparation de la requête pour la création de la table
+Afin de définir les colonnes nécessaires et leurs type, j'effectue la commande suivante :
+```SQL
+CREATE TABLE Animal (
+    id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    espece VARCHAR(40) NOT NULL,
+    sexe CHAR(1),
+    date_naissance DATETIME NOT NULL,
+    nom VARCHAR(30),
+    commentaires TEXT,
+    PRIMARY KEY (id)
+)
+ENGINE=INNODB;
 ```
 
-### Fonctions
+Si je prends la deuxième ligne `id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,` :        
+La première valeur `id` définit le nom de la table, la seconde valeur `SMALLINT` définit le type de table, la troisième valeur `UNSIGNED` dis que la valeur ne peux pas être négative, la quatrième valeur `NOT NULL` dis que la valeure par défaut ne sera pas nulle, et `AUTO_INCREMENT` définis une auto-incrémentation donc la valeur id sera automatique 1, 2, 3, 4 et ça sera compté automatiquement.
 
-J'ai appelé, et créé des fonctions, voici le code PHP créé
-```php
-// Pour appeler une fonction, on marque son nom avec (). dans les parenthèse on peux y ajouter des paramètres.
-// Je vais désormais appeler une fonction existante "date" afin d'afficher la date d'ajd
+A l'avant dernière ligne, on peux voir `PRIMARY KEY (id)` le fait de définir une clé primaire permet de définir une contrainte d'uincité (pas deux fois la même valeur), dans le cas suivant, cela permet de faire en sorte de ne pas avoir deux fois la même id.
 
-$jour = date('d'); // date est le nom de la fonction, 'd' est le paramètre
-$mois = date('m');
-$annee = date('Y');
+Afin de vérifier que la base de données a bien été modifiée, je peux effectuer les commandes suivantes : 
+```sql
+SHOW TABLES; -- permet de voir les tables dans la base de données
+-- qui me renvoie :
++----------------+
+| Tables_in_test |
++----------------+
+| Animal         |
++----------------+
 
-$heure = date('H');
-$minute = date('i');
+DESCRIBE Animal; -- permet de voir la table
+-- qui me renvoie :
++----------------+-------------------+------+-----+---------+----------------+
+| Field          | Type              | Null | Key | Default | Extra          |
++----------------+-------------------+------+-----+---------+----------------+
+| id             | smallint unsigned | NO   | PRI | NULL    | auto_increment |
+| espece         | varchar(40)       | NO   |     | NULL    |                |
+| sexe           | char(1)           | YES  |     | NULL    |                |
+| date_naissance | datetime          | NO   |     | NULL    |                |
+| nom            | varchar(30)       | YES  |     | NULL    |                |
+| commentaires   | text              | YES  |     | NULL    |                |
++----------------+-------------------+------+-----+---------+----------------+
+```
+### PROJET
+Après une étude du cahier des charges, je crée mes tables :     
+Pour le portail d'identification :
+```SQL
+USE selection;
 
-// Maintenant on peut afficher ce qu'on a recueilli
-echo "Nous sommes le " .$jour. "/" .$mois. "/" .$annee. " et il est " .$heure. "h" .$minute. "<br>";
-
-// Pour créer une fonction je tape function .. le nom de ma fonction (). Je peux également insérer des paramètres dans les parenthèses
-// Exemple : une fonction qui dis bonjour $prénom nous sommes le date
-
-function hello($name) {
-    $jour = date('d');
-    $mois = date('m');
-    $annee = date('Y');
-
-    $heure = date('H');
-    $minute = date('i');
-    echo "Bonjour " .$name. " nous sommes le " .$jour. "/" .$mois. "/" .$annee. " et il est " .$heure. "h" .$minute. "<br>";
-}
-
-// J'apelle ensuite la fonction
-
-hello("Adel");
-hello("Mathéo");
-
-// Désormais, je vais chercher à récupérer une valeur   
-
-function ajoute($value1, $value2) { // Ma fonction consiste à ajouter valeur1 à valeur2 et retourner une valeur finale
-    $finalvalue = $value1 + $value2;
-    return $finalvalue;
-}
-
-$moncalcul = ajoute(5, 6); // La valeur $moncalcul prendra la valeur retournée dans la fonction ajoute()
-echo "La valeure finale est donc " .$moncalcul. " et je peux l'utiliser dans mon code comme je le souhaite<br>";
-?>
+CREATE TABLE `users` (
+    `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `username` VARCHAR(40) NOT NULL,
+    `passwd` VARCHAR(40) NOT NULL,
+    `accounttype` VARCHAR(40) NOT NULL,
+    PRIMARY KEY (`id`)
+    UNIQUE(`username`);
+)
+ENGINE=INNODB;
 ```
 
-## Transmettre, stocker et récupérer des données
+Ensuite, pour l'espace des évaluateurs :
+```SQL
+USE selection;
 
-En PHP, on peux transmettre des données dans l'URL.     
-On peux également les transmettre via un formulaire (c'est la méthode que nous utiliserons).       
-
-Pour envoyer les données, je peux utiliser deux méthodes `post` et `get`. Avec `get` les données seront transmises dans l'URL, mais ce n'est pas sécurisé, et l'utilisateur peut modifier les données. C'est pour cela que nous utiliseras la méthode `post` même si elle n'est pas plus sécurisée, il est préférable.
-
-On peux récupérer des données avec `$_GET` ou `$_POST`.
-
-Voici le code utilisé pour ma page de login
-
-**Page de login :**
-```html
-<form action="cible.php" method="post">
-    Bienvenue, veuillez-vous identifier <br><br>
-    <input type="text" name="login" placeholder="Votre login"/>
-    <input type="password" name="password" placeholder="Votre mot de passe"/>
-    <input class="btn2 success" type="submit" value="Se connecter" />
-</form>
-```
-**Page cible**
-
-```php
-<strong>
-    Merci de vous être identifié<br><br>
-</strong>
-<?php
-$login = $_POST['login'];
-$mdp = $_POST['password'];
-if($login == "secretaire" AND $mdp == "sio@secretaire2020") {
-    include("includes/secretaire.php");
-} elseif($login == "evaluateur" AND $mdp == "sio@eval2020") {
-    include("includes/evaluateur.php");
-} elseif($login == "admin" AND $mdp == "sio@admin2020") {
-    include("includes/admin.php");
-} else {
-    echo "Erreur <br> Identifiant ou mot de passe invalide <br><br> <input class='btn2 danger' type='button' value='Retour' onclick='document.location.href=`index.php`'";
-}
-?>
+CREATE TABLE `candidat` (
+    `id` SMALLINT NOT NULL AUTO_INCREMENT,
+    `numerocandidat` MEDIUMINT NULL DEFAULT NULL,
+    `prenom` TEXT NULL DEFAULT NULL,
+    `nom` TEXT NULL DEFAULT NULL,
+    `typebac` TEXT NULL DEFAULT NULL,
+    `travailserieux` BOOLEAN NULL DEFAULT NULL,
+    `absence` BOOLEAN NULL DEFAULT NULL,
+    `attitude` BOOLEAN NULL DEFAULT NULL,
+    `etudesup` BOOLEAN NULL DEFAULT NULL,
+    `avispp` TEXT NULL DEFAULT NULL,
+    `avisproviseur` TEXT NULL DEFAULT NULL,
+    `lettremotiv` TEXT NULL DEFAULT NULL,
+    `remarques` LONGTEXT NULL DEFAULT NULL,
+    `notefinale` TINYINT(20) NULL DEFAULT NULL,
+    `etatdossier` TEXT NULL DEFAULT NULL,
+    `datecreation` DATETIME NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE (`numerocandidat`)
+)
+ENGINE=INNODB;
 ```
 
+La commande pour supprimer une table est : 
+```sql
+DROP TABLE `formulaire`;
+```
+
+### Requête sur table existante :
+Afin d'ajouter une colonne, j'effectuerais la commande suivante :
+
+```sql
+USE test;
+
+ALTER TABLE `Animal`
+ADD COLUMN `datetest` DATE NOT NULL;
+```
+
+Afin de modifier une colonne, j'effectuerais la commande suivante : 
+```sql
+USE test;
+
+ALTER TABLE `Animal`
+CHANGE `datetest` `datetest2` VARCHAR(10) NOT NULL;
+```
+
+Afin de supprimer une colonne, j'effectuerais la commande suivante :
+```sql
+ALTER TABLE `Animal`
+DROP COLUMN `datetest2`
+```
+
+## Commandes de descriptions
+Voici une liste de commandes de description, avec leur rôle.
+
+`SHOW DATABASES` : Permet d'afficher les bases de données présentes sur le SGBDR        
+`SHOW TABLES` : Permet d'afficher les tables présente dans une base de données      
+`SHOW CHARCTER SET` : Permet d'afficher le jeu de caractère d'une table    
+`SHOW GRANTS [FOR utilisateur]` : Permet d'afficher les droits pour `utilisateur`       
+`SHOW WARNINGS` : Permet d'afficher les avertissements de MySQL     
+`DESCRIBE nom_table` : Affiche le contenu du'une table      
+`SHOW CREATE type_objet nom_objet \G` : Permet de vérifier si la syntaxe est correcte
+
+## Données création
+Afin d'insérer des données, on peux le faire sans définir chaque colonne, voici la commande qui sera effectuée :
+
+```sql
+USE test;
+
+INSERT INTO Animal VALUES
+    (1, 'chien', 'M', '2010-04-05 13:43:00', 'Rox', 'Mordille beaucoup');
+```
+
+
+Ensuite, en définissant les colonnes, (cela permet de supprimer une colonne, ou de changer l'ordre)
+```sql
+USE test;
+
+INSERT INTO Animal (espece, sexe, date_naissance) VALUES
+    ('tortue', 'F', '2009-08-03 05:12:00');
+```
+
+On peux égalment insérer plusieurs valeurs en une seule commande :
+```sql
+USE test;
+
+INSERT INTO Animal (espece, sexe, date_naissance, nom) VALUES
+    ('chien', 'F', '2008-12-06 05:18:00', 'Caroline'),
+    ('chat', 'M', '2008-09-11 15:38:00', 'Bagherra'),
+    ('tortue', NULL, '2010-08-23 05:18:00', NULL);```
+```
+
+Pour effectuer de grosses requête, on peux executer un ficheir externe, pour se faire, on utilise la commande :
+```sql
+SOURCE /home/monfichier.sql
+```
+
+### PROJET
+Afin d'importer des données à partir d'un fichier .csv, il faut effectuer la commande suivante
+```sql
+LOAD DATA LOCAL INFILE 'animal.csv'
+INTO TABLE Animal
+FIELDS TERMINATED BY ';' ENCLOSED BY '"'
+LINES TERMINATED BY '\n' -- ou '\r\n' selon l'ordinateur et le programme utilisés pour créer le fichier
+(espece, sexe, date_naissance, nom, commentaires);
+```
+
+Et voici le contenu du fichier `animal.csv` :
+```csv
+"chat";"M";"2009-05-14 06:42:00";"Boucan";NULL
+"chat";"F";"2006-05-19 16:06:00";"Callune";NULL
+"chat";"F";"2009-05-14 06:45:00";"Boule";NULL
+"chat";"F";"2008-04-20 03:26:00";"Zara";NULL
+"chat";"F";"2007-03-12 12:00:00";"Milla";NULL
+"chat";"F";"2006-05-19 15:59:00";"Feta";NULL
+"chat";"F";"2008-04-20 03:20:00";"Bilba";"Sourde de l'oreille droite à 80%"
+"chat";"F";"2007-03-12 11:54:00";"Cracotte";NULL
+"chat";"F";"2006-05-19 16:16:00";"Cawette";NULL
+"tortue";"F";"2007-04-01 18:17:00";"Nikki";NULL
+"tortue";"F";"2009-03-24 08:23:00";"Tortilla";NULL
+"tortue";"F";"2009-03-26 01:24:00";"Scroupy";NULL
+"tortue";"F";"2006-03-15 14:56:00";"Lulla";NULL
+"tortue";"F";"2008-03-15 12:02:00";"Dana";NULL
+"tortue";"F";"2009-05-25 19:57:00";"Cheli";NULL
+"tortue";"F";"2007-04-01 03:54:00";"Chicaca";NULL
+"tortue";"F";"2006-03-15 14:26:00";"Redbul";"Insomniaque"
+"tortue";"M";"2007-04-02 01:45:00";"Spoutnik";NULL
+"tortue";"M";"2008-03-16 08:20:00";"Bubulle";NULL
+"tortue";"M";"2008-03-15 18:45:00";"Relou";"Surpoids"
+"tortue";"M";"2009-05-25 18:54:00";"Bulbizard";NULL
+"perroquet";"M";"2007-03-04 19:36:00";"Safran";NULL
+"perroquet";"M";"2008-02-20 02:50:00";"Gingko";NULL
+"perroquet";"M";"2009-03-26 08:28:00";"Bavard";NULL
+"perroquet";"F";"2009-03-26 07:55:00";"Parlotte";NULL
+```
+
+## Sélection
+Pour sélectionner des données, on utilise la commande `SELECT` on peux selectionne une, ou plusieurs colonnes avec la commande : 
+```sql
+SELECT espece, sexe FROM Animal
+```
+
+Ou bien sélectionner toutes les colonnes avec la commande : 
+```sql
+SELECT * FROM Animal
+```
+
+### WHERE
+On peux également restreindre les critères de recherche, par exemple si je veux ne selectionner que les chiens :
+```sql
+SELECT * FROM Animal WHERE espece = "chien";
+```
+
+### OPERATEURS DE SELECTION
+On peux également utiliser des opérateurs de sélection, par exemple :
+```sql
+SELECT * FROM Animal WHERE date_naissance < '2008-01-01'; -- tout les animaux nés avant 2008
+SELECT * FROM Animal WHERE espece != "chien"; -- tout les animaux saufs les chiens
+```
+
+### COMBINAISONS DE CRITERES
+On peux également combiner les critères avec `AND`, `OR`, `XOR` ou `NOT`. Par exemple :
+```sql
+SELECT * FROM Animal WHERE espece = "chat" AND sexe = "F"; -- selectionne les chats femelles
+SELECT * FROM Animal WHERE espece = "chat" OR espece = "chien"; -- selcetionne les chats & chiens
+SELECT * FROM Animal WHERE sexe = "F" AND NOT espece = "chien"; -- selectionne toutes les femmelles sauf les chiennes
+SELECT * FROM Animal WHERE sexe = "M" XOR espece = "perroquet"; -- selcetionne les animaux qui sont soit des mâles, soit des perroquets (mais pas les deux)
+```
+
+### NULL
+On peux également demander les valeurs qui sont nulles :
+```sql
+SELECT * FROM Animal WHERE sexe IS NULL; -- selectionne tout les animaux où le sexe n'a pas été renseignés
+```
+
+### LIKE
+`LIKE` permet de faire des recherches approximatives, par exemple           
+`b%`  cherchera toutes les chaînes de caractères commençant par 'b'  ("brocoli", "bouli", "b").         
+`b_`  cherchera toutes les chaînes de caractères contenant deux lettres dont la première est 'b'  ("ba", "bf", "b8").           
+`%ch%ne`  cherchera toutes les chaînes de caractères contenant 'ch'  et finissant par 'ne'  ("chne", "chine", "échine", "le pays le plus peuplé du monde est la Chine").            
+`p_rl_`  cherchera toutes les chaînes de caractères commençant par un "p" suivi d'un caractère, puis de "rl" et enfin se terminant par un caractère ("parle", "perla", "perle").            
+
+### ORDER BY
+On peux trier les données, dans un ordre ascendant (`ASC`) ou descendant (`DESC`), par exemple :
+```sql
+SELECT * FROM Animal WHERE espece = "chien"
+ORDER BY date_naissance ASC;
+```
+
+On peux également trier sur plusieurs colonnes, par exemple :
+```sql
+SELECT * FROM Animal
+ORDER BY date_naissance, espece ASC;
+```
+Le tri se fera d'abord sur le première colonne, puis sur la seconde.
+
+### DISTINCT
+Distinct permet de supprimer les doublons, par exemple :
+```sql
+SELECT DISTINCT espece FROM Animal;
+```
+
+### LIMIT
+Permet de limiter les données selectionner :
+```sql
+SELECT * FROM Animal LIMIT 10;
+```
+Il ne selectionnera que 10 lignes.
+
+On peux également définir un point de départ avec `OFFSET`, par exemple : 
+```sql
+SELECT * FROM Animal LIMIT 5 OFFSET 2;
+```
+Ici, il selectionnera 5 lignes après de la ligne 2
+
+## Supprimer et modifier les données
+Pour supprimer une ligne, on peux effectuer la commande `DELETE FROM`, si on veux par exemple supprimer l'animal "Zoulou" de la base de données, on effectuera la commande :
+```sql
+DELETE FROM Animal WHERE nom = "Zoulou"
+```
+
+Pour modifier une ligne, on va utiliser `UPDATE` et `SET`, par exemple si on veux modifier le sexe de "Pataud", on effectuera la commande :
+```sql
+UPDATE Animal SET sexe = "F" WHERE nom = "Pataud";
+```
+
+## Sauvegarde et restauration
+Afin de sauvegarder une bdd, il faut utiliser `mysqldump`
+### PROJET
+Afin de sauvegarder ma bdd, j'effectue la commande :        
+`mysqldump -u root -p --opt test > save.sql`
+
+Ensuite, pour restaure la bdd, j'effectue la commande : `mysql test < save.sql`.
+
+## Index
+Un index est une structure qui reprend la liste ordonnée des valeurs auxquelles il se rapporte.     
+Les index sont utilisés pour accélérer les requêtes (notamment les requêtes impliquant plusieurs tables, ou les requêtes de recherche), et sont indispensables à la création de clés, étrangères et primaires, qui permettent de garantir l'intégrité des données de la base et dont nous parlerons au chapitre suivant.
+
+## Clés
+Il y a des clés primaires et uniques dans la base de donnée "selection", dans la table "formulaire"
+
+Pour supprimer une clé primaire, j'effectue la requête
+```sql
+ALTER TABLE `users` DROP PRIMARY KEY;
+```
+
+## Jointures
+
+## Utilisateurs
+Afin de créer un utilisateur qui a tout les droits, j'ai effectuer les requêtes SQL suivantes :
+```sql
+CREATE USER '20ettouil'@'localhost' IDENTIFIED BY 'student';
+GRANT ALL ON *.* TO '20ettouil'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+```
